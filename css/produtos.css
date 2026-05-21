@@ -43,7 +43,6 @@
   flex-direction: column;
   isolation: isolate;
   will-change: transform;
-  touch-action: none;
 
   --spot-opacity: 0;
   background-image: radial-gradient(
