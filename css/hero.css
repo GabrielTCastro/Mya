@@ -1,0 +1,67 @@
+/* ================================================
+   HERO.CSS — Depth Layering v5
+   Canvas z-index 0 — nick desenhado via fillText
+   Tagline no DOM z-index 2, visível acima do canvas
+   ================================================ */
+
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  contain: strict;
+}
+
+.hero-gradient {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to bottom, transparent, var(--bg-primary));
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* hero-content: centralizado, apenas tagline visível */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  /* Desce a tagline para alinhar abaixo do nick no canvas */
+  margin-top: 6rem;
+}
+
+/* Nick existe no DOM para SEO — JS aplica visibility:hidden */
+.hero-nick {
+  font-family: var(--font-display);
+  font-size: clamp(5.5rem, 20vw, 12rem);
+  color: transparent;
+  line-height: 1;
+  user-select: none;
+}
+
+.hero-tagline {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  color: rgba(139, 170, 196, 0.65);
+  margin-top: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  animation: fade-up 1.1s ease 0.6s both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

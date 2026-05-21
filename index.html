@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- EDITE AQUI: Substitua pela descrição do seu perfil -->
+  <meta name="description" content="[PLACEHOLDER: Sua descrição aqui]">
+
+  <!-- === OPEN GRAPH (edite antes do deploy) === -->
+  <!-- <meta property="og:title" content="[SEU NICK] — Links"> -->
+  <!-- <meta property="og:description" content="[PLACEHOLDER: Sua descrição aqui]"> -->
+  <!-- <meta property="og:image" content="[PLACEHOLDER: URL da imagem de preview]"> -->
+  <!-- <meta property="og:url" content="[PLACEHOLDER: URL da página]"> -->
+  <!-- <meta property="og:type" content="website"> -->
+
+  <!-- Segurança -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://unpkg.com;">
+
+  <!-- EDITE AQUI: Substitua [SEU NICK] pelo seu nick real -->
+  <title>𝓜𝔂𝓪</title>
+
+  <!-- === ESTILOS MODULARIZADOS === -->
+  <link rel="stylesheet" href="css/geral.css?v=3">
+  <link rel="stylesheet" href="css/hero.css?v=5">
+  <link rel="stylesheet" href="css/redes.css?v=6">
+  <link rel="stylesheet" href="css/produtos.css?v=19">
+</head>
+
+<body>
+
+  <!-- ============================================ -->
+  <!-- CONTAINERS DOS COMPONENTES HTML              -->
+  <!-- ============================================ -->
+  <!-- O conteúdo será injetado aqui via JavaScript -->
+  <header id="hero">
+    <div class="hero-bg" aria-hidden="true">
+    </div>
+    <div class="hero-gradient" aria-hidden="true"></div>
+    <div class="hero-content">
+      <!-- EDITE AQUI: Substitua pelo seu nick -->
+      <h1 class="hero-nick">𝓜𝔂𝓪</h1>
+      <!-- EDITE AQUI: Substitua pela sua descrição -->
+      <p class="hero-tagline">Sua descrição curta aqui</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="redes">
+      <!-- Conteúdo gerado pelo js/links.js — edite o array PLATAFORMAS nesse arquivo -->
+    </section>
+
+    <section id="produtos">
+      <div class="section-header">
+        <div class="section-line" aria-hidden="true"></div>
+        <h2 class="section-label">Produtos</h2>
+        <div class="section-line" aria-hidden="true"></div>
+      </div>
+
+      <div class="produtos-grid reveal" id="produtos-grid">
+        <!--
+      CARD DE PRODUTO
+      Para duplicar: copie este bloco inteiro e altere:
+      - data-name: nome do produto (usado na busca)
+      - .produto-img: URL da imagem do produto
+      - .produto-nome: nome exibido
+      - .produto-desc: descrição curta
+      - href do botão: link de afiliação
+    -->
+        <article class="produto-card" data-name="Jaqueta Esportiva">
+          <div class="spotlight-outer"></div>
+          <div class="produto-img-wrapper">
+            <!-- EDITE AQUI: Substitua o src pela URL da imagem do produto -->
+            <img src="Imagens/Jaqueta.png" alt="Jaqueta Esportiva" class="produto-img" loading="lazy" decoding="async"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="produto-img-placeholder">
+              <span>📦</span>
+              <span>Imagem do Produto</span>
+            </div>
+          </div>
+          <div class="produto-body">
+            <!-- EDITE AQUI: Nome do produto -->
+            <h3 class="produto-nome">Jaqueta Esportiva</h3>
+            <!-- EDITE AQUI: Descrição curta -->
+            <p class="produto-desc">Uma jaqueta esportiva exclusivamente feminina super confortavel</p>
+            <!-- EDITE AQUI: Substitua # pelo link de afiliação -->
+            <a href="https://shopee.com.br/product/428184127/26082452670?channel_code=MyCollection&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRoz0ZUjQw0QlRa--FjB0AKnHQPF7xv4DyGj9-GQwqn4zSdB6gztmw7ebmtsZs9FPJxlVqctc57WUE3IRqmNpcGhlcnRleHTEhAAAAAwhK68lkrx37arwOeofrI0dSv02HTS84yuw28zjJi3wT3HJGhZ_zMQv6ElJi6S4jonpjgVjHwMQkMT5-bYwbz7vHaZlGhDInbEcoX6-Z5PwXKRS7PH_CLCo2E9-GuVumxaUpiKmTUMtpke-O2l5cFsdUWfLi0YzcF8aca1QzHvnVA&mmp_pid=an_18303130921&uls_trackid=55lti47p00pa&utm_campaign=id_U5ue1TyCNB&utm_content=----&utm_medium=affiliates&utm_source=an_18303130921&utm_term=ewuvgkjaw5vo"
+              class="produto-btn" data-link="jaqueta-esportiva" target="_blank"
+              rel="noopener noreferrer sponsored">Acessar</a>
+          </div>
+        </article>
+
+        <article class="produto-card" data-name="Conjunto Fitness">
+          <div class="spotlight-outer"></div>
+          <div class="produto-img-wrapper">
+            <img src="Imagens/Conjunto.png" alt="Conjunto Fitness" class="produto-img" loading="lazy" decoding="async"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="produto-img-placeholder">
+              <span>📦</span>
+              <span>Imagem do Produto</span>
+            </div>
+          </div>
+          <div class="produto-body">
+            <h3 class="produto-nome">Conjunto Fitness</h3>
+            <p class="produto-desc">Um conjunto com material de qualidade, confortavel e tento um short duplo</p>
+            <a href="https://shopee.com.br/product/349179341/22497622314?channel_code=MyCollection&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRoz0ZUjQw0QlRa--FjB0AKnHQPF7xv4DyGj9-GQwqn4zSdB6gztmw7ebmtsZs9FPJxlVqctc57WUE3IRqmNpcGhlcnRleHTEhAAAAAy4vcs0cKrGaHKAcMuFJnIg6Wh7HxVEmPEuTGyloWEeubcH3mrSmiYUKW27S_EqfmOyIfP8BDKzt3ofQlbJyIJ3xvy-G3GdTnnSFvZ0rEFmYn5NGf6CqvZ-BsaYv5odox0JTs0QR64J55b5YQp3YhRfsrUyMilspx5Ti2MjcVdG5Q&mmp_pid=an_18303130921&uls_trackid=55ltsjn400l0&utm_campaign=id_HV6B4qweBz&utm_content=----&utm_medium=affiliates&utm_source=an_18303130921&utm_term=ewv4iwpu1bq9"
+              class="produto-btn" data-link="conjunto-fitness" target="_blank"
+              rel="noopener noreferrer sponsored">Acessar</a>
+          </div>
+        </article>
+
+        <article class="produto-card" data-name="Produto 3">
+          <div class="spotlight-outer"></div>
+          <div class="produto-img-wrapper">
+            <img src="" alt="Produto 3" class="produto-img" loading="lazy" decoding="async" width="400" height="225"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="produto-img-placeholder">
+              <span>📦</span>
+              <span>Imagem do Produto</span>
+            </div>
+          </div>
+          <div class="produto-body">
+            <h3 class="produto-nome">Produto 3</h3>
+            <p class="produto-desc">Descrição breve do produto aqui. Máximo 2 linhas.</p>
+            <a href="#" class="produto-btn" data-link="produto-3" target="_blank"
+              rel="noopener noreferrer sponsored">Acessar</a>
+          </div>
+        </article>
+
+
+      </div>
+    </section>
+
+  </main>
+  <footer id="rodape">
+    <!-- EDITE AQUI: Substitua pelo seu nome/crédito se quiser -->
+    <p class="footer-text">© 2024 <span class="footer-nick">Seu Nick</span></p>
+  </footer>
+
+
+  <!-- ============================================ -->
+  <!-- DEVTOOLS OVERLAY                             -->
+  <!-- ============================================ -->
+  <div id="devtools-overlay" style="display:none">
+    <div class="overlay-box">
+      <span>🔒</span>
+      <p>Inspeção de código desativada.</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- LOADER DE COMPONENTES E SCRIPTS              -->
+  <!-- ============================================ -->
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script>
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  </script>
+
+  <script src="js/geral.js?v=4" defer></script>
+  <script src="js/links.js?v=4" defer></script>
+  <script src="js/produtos.js?v=13" defer></script>
+  <script src="js/particles.js?v=2" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,234 @@
+/* ================================================
+   PRODUTOS.CSS — Spotlight Glow Cards + 3D Tilt
+   Depende de: geral.css (variáveis)
+   ================================================ */
+
+#produtos {
+  padding: clamp(32px, 5vw, 60px) 1.5rem var(--section-padding);
+}
+
+
+
+/* ======================================================
+   GRID
+====================================================== */
+.produtos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem; padding: 0 1.5rem; max-width: 1200px; margin: 0 auto;
+}
+
+/* ======================================================
+   CARD — Spotlight Glow System
+   Usa --x, --y (viewport coords) definidas pelo JS.
+   background-attachment:fixed faz o radial-gradient
+   posicionar-se relativo ao viewport = spotlight natural.
+====================================================== */
+.produto-card {
+  --base: 220;
+  --spread: 200;
+  --radius: 24;
+  --border: 2;
+  --backdrop: hsl(240 10% 6% / 0.95);
+  --backup-border: hsl(240 10% 20% / 0.25);
+  --size: 200;
+  --outer: 1;
+  --border-size: calc(var(--border) * 1px);
+  --spotlight-size: calc(var(--size) * 1px);
+  --hue: calc(var(--base) + (var(--xp, 0) * var(--spread)));
+
+  position: relative;
+  border-radius: calc(var(--radius) * 1px);
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  will-change: transform;
+  touch-action: none;
+
+  --spot-opacity: 0;
+  background-image: radial-gradient(
+    var(--spotlight-size) var(--spotlight-size) at
+    calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+    hsl(var(--hue, 210) 100% 70% / calc(0.1 * var(--spot-opacity))), transparent
+  );
+  background-color: var(--backdrop);
+  background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+  background-position: 50% 50%;
+  border: var(--border-size) solid var(--backup-border);
+  transition: box-shadow 0.4s ease;
+}
+
+.produto-card:hover {
+  --spot-opacity: 1;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35), 0 0 15px rgba(48,176,255,0.08);
+}
+
+/* ======================================================
+   SPOTLIGHT BORDER — ::before (cor) + ::after (branco)
+   Mask mostra apenas a área da borda.
+====================================================== */
+.produto-card::before,
+.produto-card::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: calc(var(--border-size) * -1);
+  border: var(--border-size) solid transparent;
+  border-radius: calc(var(--radius) * 1px);
+  background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  opacity: var(--spot-opacity);
+  transition: opacity 0.4s ease;
+
+  mask:
+    linear-gradient(transparent, transparent),
+    linear-gradient(white, white);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+
+  -webkit-mask:
+    linear-gradient(transparent, transparent),
+    linear-gradient(white, white);
+  -webkit-mask-clip: padding-box, border-box;
+  -webkit-mask-composite: source-in;
+}
+
+/* Borda colorida que segue o cursor */
+.produto-card::before {
+  background-image: radial-gradient(
+    calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
+    calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+    hsl(var(--hue, 210) 100% 50% / 1), transparent 100%
+  );
+  filter: brightness(2);
+  z-index: 6;
+}
+
+/* Highlight branco mais concentrado */
+.produto-card::after {
+  background-image: radial-gradient(
+    calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
+    calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+    hsl(0 100% 100% / 1), transparent 100%
+  );
+  z-index: 7;
+}
+
+/* ======================================================
+   OUTER GLOW — blur externo suave
+====================================================== */
+.spotlight-outer {
+  position: absolute;
+  inset: 0;
+  will-change: filter;
+  opacity: calc(var(--outer, 1) * var(--spot-opacity));
+  transition: opacity 0.4s ease;
+  border-radius: calc(var(--radius) * 1px);
+  filter: blur(calc(var(--border-size) * 10));
+  background: none;
+  pointer-events: none;
+  z-index: 0;
+}
+.spotlight-outer::before {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border: 10px solid transparent;
+  border-radius: calc(var(--radius) * 1px);
+  background-size: calc(100% + 20px) calc(100% + 20px);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-image: radial-gradient(
+    calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
+    calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+    hsl(var(--hue, 210) 100% 50% / 1), transparent 100%
+  );
+  mask:
+    linear-gradient(transparent, transparent),
+    linear-gradient(white, white);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  -webkit-mask:
+    linear-gradient(transparent, transparent),
+    linear-gradient(white, white);
+  -webkit-mask-clip: padding-box, border-box;
+  -webkit-mask-composite: source-in;
+  filter: brightness(2);
+}
+
+.produto-img-wrapper {
+  aspect-ratio: 16/9; overflow: visible; background: #0d1117;
+  position: relative; z-index: 10;
+  border-radius: 22px 22px 0 0;
+}
+.produto-img {
+  position: absolute;
+  width: 140%; height: 140%;
+  left: -20%; top: -20%;
+  object-fit: contain;
+  opacity: 0; 
+  transform: scale(0.714) translateY(0); /* (100 / 140 = ~0.714) Imagem renderiza em alta res e reduz */
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.produto-img.loaded { opacity: 1; }
+.produto-card:hover .produto-img { 
+  transform: scale(0.95) translateY(-8%); /* Fica nitido porque o scale real ainda é < 1 */
+}
+.produto-img-placeholder {
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.5rem; height: 100%;
+  color: var(--text-secondary); font-size: 0.85rem;
+}
+
+/* ======================================================
+   BODY CONTENT
+====================================================== */
+.produto-body {
+  padding: 1.5rem; flex: 1; display: flex; flex-direction: column;
+  gap: 0.75rem; position: relative; z-index: 2;
+}
+.produto-nome { color: #fff; font-family: var(--font-body); font-size: 1.1rem; font-weight: 700; }
+.produto-desc { color: rgba(255,255,255,0.6); line-height: 1.7; font-size: 0.92rem; flex: 1; }
+
+/* ======================================================
+   BUTTON — Neon outline
+====================================================== */
+.produto-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 22px; border-radius: 14px; text-decoration: none;
+  font-weight: 600; font-family: var(--font-body); font-size: 0.9rem;
+  align-self: flex-start; position: relative; z-index: 3;
+  color: var(--accent); background: rgba(48,176,255,0.08);
+  border: 1px solid rgba(48,176,255,0.2);
+  box-shadow: 0 0 15px rgba(48,176,255,0.1);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.produto-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(48,176,255,0.15);
+  box-shadow: 0 0 25px rgba(48,176,255,0.2);
+}
+
+/* ======================================================
+   REVEAL
+====================================================== */
+.reveal { opacity: 0; transform: translateY(28px); }
+.reveal.revealed { animation: reveal-anim 0.65s cubic-bezier(0,0,0.2,1) both; }
+@keyframes reveal-anim {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+@media (max-width: 768px) {
+  .produtos-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); padding: 0 1rem; gap: 1.5rem; }
+}
+@media (max-width: 480px) {
+  .produtos-grid { grid-template-columns: 1fr; }
+
+}

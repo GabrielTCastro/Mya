@@ -1,0 +1,147 @@
+/* ================================================
+   GERAL.CSS — Reset, Variáveis, Fonts, Overlay, Footer, Responsivo
+   Este arquivo é a BASE de tudo. Todos os outros CSS dependem dele.
+   ================================================ */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+/* === VARIÁVEIS CSS === */
+:root {
+  /* Cores */
+  --accent: #30b0ff;
+  --accent-dim: rgba(48, 176, 255, 0.15);
+  --accent-glow: rgba(48, 176, 255, 0.35);
+  --bg-primary: #080b0f;
+  --bg-secondary: #0d1117;
+  --bg-card: rgba(13, 17, 23, 0.75);
+  --text-primary: #f0f6ff;
+  --text-secondary: #8baac4;
+  --border: rgba(48, 176, 255, 0.18);
+  --border-hover: rgba(48, 176, 255, 0.55);
+
+  /* Tipografia */
+  --font-display: 'Russo One', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Espaçamentos */
+  --section-padding: clamp(60px, 10vw, 120px);
+  --card-radius: 16px;
+  --btn-radius: 12px;
+
+  /* Transições */
+  --transition-fast: 0.18s ease;
+  --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(8, 11, 15, 0.6);
+  --glass-blur: blur(18px);
+  --glass-border: 1px solid var(--border);
+}
+
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+/* === LENIS SMOOTH SCROLL === */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
+
+/* === SECTION HEADER (reutilizável) === */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  justify-content: center;
+}
+.section-label {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.section-line {
+  flex: 0 0 60px;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+/* === RODAPÉ === */
+#rodape {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+}
+.footer-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+.footer-nick { color: var(--accent); }
+
+/* === DEVTOOLS OVERLAY === */
+#devtools-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 11, 15, 0.97);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  text-align: center;
+}
+.overlay-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.2rem;
+}
+.overlay-box span:first-child {
+  font-size: 3rem;
+}
+
+/* === RESPONSIVO === */
+@media (max-width: 768px) {
+  .produtos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    padding: 0 1rem;
+  }
+  .hero-nick { letter-spacing: 0.02em; }
+}
+
+@media (max-width: 480px) {
+  .produtos-grid { grid-template-columns: 1fr; }
+  .social-links { max-width: 100%; }
+  .search-wrapper { margin: 0 1rem 2rem; }
+}
+
+/* === ACESSIBILIDADE E PERFORMANCE === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .snow { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
