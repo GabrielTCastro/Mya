@@ -84,7 +84,7 @@
 
 /* === ESTADO: CENTRAL === */
 .social-card.current--card {
-  transform: translate(-50%, -50%) translateX(0) rotateY(0deg) scale(1.08);
+  transform: translate(-50%, -50%) translateX(0) translateZ(100px) rotateY(0deg) scale(1.08);
   opacity: 1;
   z-index: 30;
   cursor: default;
@@ -102,7 +102,7 @@
 
 /* === ESTADO: ESQUERDA === */
 .social-card.previous--card {
-  transform: translate(-50%, -50%) translateX(calc(-1 * var(--card-width) * 1.05)) rotateY(20deg) scale(0.88);
+  transform: translate(-50%, -50%) translateX(calc(-1 * var(--card-width) * 1.05)) translateZ(50px) rotateY(20deg) scale(0.88);
   opacity: 0.6;
   z-index: 20;
 }
@@ -113,7 +113,7 @@
 
 /* === ESTADO: DIREITA === */
 .social-card.next--card {
-  transform: translate(-50%, -50%) translateX(calc(var(--card-width) * 1.05)) rotateY(-20deg) scale(0.88);
+  transform: translate(-50%, -50%) translateX(calc(var(--card-width) * 1.05)) translateZ(50px) rotateY(-20deg) scale(0.88);
   opacity: 0.6;
   z-index: 20;
 }
