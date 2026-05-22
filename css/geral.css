@@ -41,12 +41,17 @@
 
 /* === RESET & BASE === */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; width: 100%; }
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
   overflow-x: hidden;
+  width: 100%;
+}
+main {
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* === LENIS SMOOTH SCROLL === */
