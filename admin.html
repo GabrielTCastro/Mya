@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mya — Painel de Controle</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="Imagens/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Imagens/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Imagens/favicon-16x16.png">
+  <link rel="manifest" href="Imagens/site.webmanifest">
+  <link rel="shortcut icon" href="Imagens/favicon.ico">
+
+  <style>
+    /* === DESIGN SYSTEM MYA ADMINISTRATIVE === */
+    :root {
+      --bg-dark: #080b0f;
+      --bg-card: rgba(13, 17, 23, 0.98); /* Quase opaco para performance extrema de rolagem */
+      --border-glow: rgba(48, 176, 255, 0.18);
+      --border-hover: rgba(48, 176, 255, 0.65);
+      --accent-purple: #30b0ff; /* Mapeado para o azul de destaque do site principal */
+      --accent-pink: #00e5ff;   /* Mapeado para o ciano vibrante do site principal */
+      --accent-cyan: #30b0ff;
+      --text-main: #f0f6ff;
+      --text-muted: #8baac4;
+      --success: #10b981;
+      --font-display: 'Russo One', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 2rem 1rem;
+    }
+
+    /* Elemento isolado para fundo com aceleração de GPU */
+    .bg-glows {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(48, 176, 255, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 40%);
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
+    }
+
+    /* Scrollbar elegante */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #182232;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-purple);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header do Painel */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .header-logo {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-main) 30%, var(--accent-purple) 70%, var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      font-weight: 500;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--success);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px var(--success); }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    /* Grid do Painel */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+    }
+
+    /* Painéis e Cards — Backdrop blur removido para performance extrema no scroll */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s ease;
+    }
+
+    .panel:hover {
+      border-color: var(--border-hover);
+    }
+
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .panel-title span.icon {
+      font-size: 1.6rem;
+    }
+
+    /* Formulários e Inputs */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: rgba(8, 11, 15, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      color: var(--text-main);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(48, 176, 255, 0.35);
+      background: rgba(13, 17, 23, 0.95);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Botões */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+      color: #080b0f; /* Fundo escuro nas fontes dos botões ciano para contraste perfeito */
+      font-family: var(--font-display);
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: 10px;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(48, 176, 255, 0.25);
+      width: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(48, 176, 255, 0.45);
+      filter: brightness(1.1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+      color: var(--text-main);
+      font-family: var(--font-body);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: none;
+    }
+
+    .btn-danger {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #f43f5e;
+      box-shadow: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      width: auto;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 20;
+      font-family: var(--font-body);
+      font-weight: 600;
+    }
+
+    .btn-danger:hover {
+      background: #f43f5e;
+      color: white;
+      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+    }
+
+    /* Alinhamento lado a lado de redes */
+    .redes-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 600px) {
+      .redes-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .redes-card {
+      background: rgba(8, 11, 15, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+    }
+
+    .redes-card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .instagram-color { color: #f43f5e; }
+    .tiktok-color { color: #ffffff; }
+    .youtube-color { color: #ef4444; }
+    .twitch-color { color: #a855f7; }
+
+    /* Produtos Seção Especial */
+    .admin-produtos-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 600px) {
+      .admin-produtos-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 1000px) {
+      .admin-produtos-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    .admin-prod-card {
+      background: rgba(8, 11, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .admin-prod-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(48, 176, 255, 0.4);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    .admin-prod-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: #0d1117;
+    }
+
+    .admin-prod-info {
+      padding: 1.25rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-prod-nome {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .admin-prod-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex-grow: 1;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .admin-prod-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Overlay elegante de Edição nos cards — Backdrop filter removido */
+    .admin-prod-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 50px;
+      background: rgba(8, 11, 15, 0.92); /* Mais opaco para ocultar o fundo sem blur */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      opacity: 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .admin-prod-card:hover .admin-prod-overlay {
+      opacity: 1;
+    }
+
+    .edit-pencil-icon {
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(48, 176, 255, 0.6));
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .admin-prod-overlay:hover .edit-pencil-icon {
+      transform: scale(1.1) rotate(-15deg);
+    }
+
+    .edit-text {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-pink);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+    }
+
+    /* Formulário de Adicionar/Editar */
+    .add-product-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 900px) {
+      .add-product-layout {
+        grid-template-columns: 1.2fr 1.8fr;
+      }
+    }
+
+    .form-container-card {
+      background: rgba(8, 11, 15, 0.4);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
+    }
+
+    .form-container-card.edit-mode {
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+      background: rgba(13, 17, 23, 0.7);
+    }
+
+    .form-section-subtitle {
+      margin-bottom: 1.25rem;
+      font-size: 1.15rem;
+      color: var(--accent-purple);
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .form-container-card.edit-mode .form-section-subtitle {
+      color: var(--accent-pink);
+    }
+
+    /* Alternador de Modo de Imagem (Upload vs URL) */
+    .image-mode-selector {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(8, 11, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.3rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .mode-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .mode-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .mode-btn.active {
+      background: var(--accent-purple);
+      color: #080b0f;
+      box-shadow: 0 4px 12px rgba(48, 176, 255, 0.25);
+    }
+
+    /* Área de Drag & Drop */
+    .drag-drop-area {
+      background: rgba(8, 11, 15, 0.4);
+      border: 2px dashed rgba(48, 176, 255, 0.3);
+      border-radius: 14px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .drag-drop-area:hover, .drag-drop-area.drag-over {
+      border-color: var(--accent-pink);
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 2.2rem;
+    }
+
+    .upload-text {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .upload-subtext {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .cropper-frame {
+      width: 320px;
+      height: 180px;
+      margin: 0 auto;
+      background: #0d1117;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      cursor: move;
+      margin-top: 1rem;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    #cropper-image {
+      position: absolute;
+      transform-origin: top left;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .cropper-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--accent-pink);
+      border-radius: 12px;
+      pointer-events: none;
+      box-shadow: 0 0 0 9999px rgba(8, 11, 15, 0.5);
+    }
+
+    .cropper-controls {
+      margin-top: 1rem;
+      background: rgba(8, 11, 15, 0.4);
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    #image-zoom {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.1);
+      outline: none;
+      margin: 0.75rem 0;
+      transition: background 0.3s;
+    }
+
+    #image-zoom::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-pink);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent-pink);
+      transition: transform 0.1s;
+    }
+
+    #image-zoom::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Notificações flutuantes vindas de cima — Backdrop blur removido */
+    .toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: #0d1117;
+      border: 1px solid var(--accent-purple);
+      color: var(--text-main);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(48, 176, 255, 0.25);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transform: translateY(-180%);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+
+    .toast-success {
+      border-color: var(--accent-cyan);
+    }
+
+    /* Modal de Confirmação de Exclusão */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 11, 15, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-card {
+      background: #0d1117;
+      border: 1px solid rgba(244, 63, 94, 0.45);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 20px rgba(244, 63, 94, 0.2);
+      transform: translateY(20px) scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.show .modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-text {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .btn-modal-cancel {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-modal-confirm {
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-modal-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.55);
+    }
+
+    /* Empty state */
+    .empty-state {
+      grid-column: span 3;
+      text-align: center;
+      padding: 3rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 16px;
+      color: var(--text-muted);
+    }
+
+    .empty-state span.emoji {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Fundo acelerado por hardware para performance total -->
+  <div class="bg-glows" aria-hidden="true"></div>
+
+  <div class="container">
+    <header>
+      <div class="header-logo">𝓜𝔂𝓪</div>
+      <p>Gerenciador Dinâmico de Conteúdo do Site</p>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        Firebase Conectado com Sucesso
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+
+      <!-- PAINEL HERO -->
+      <section class="panel">
+        <h2 class="panel-title">
+          <span class="icon">✨</span> Seção Hero (Cabeçalho)
+        </h2>
+        <form id="form-hero">
+          <div class="form-group">
+            <label for="hero-nick">Nick do Canal / Nome Principal</label>
+            <input type="text" id="hero-nick" placeholder="Ex: Mya" required>
+          </div>
+          <div class="form-group">
+            <label for="hero-tagline">Descrição Curta (Tagline)</label>
+            <textarea id="hero-tagline" placeholder="Ex: Sua descrição curta aqui..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="hero-favicon">Favicon (URL da Imagem) <span style="font-weight: normal; font-size: 0.8em;">— Opcional (Deixe em branco para usar o padrão)</span></label>
+            <input type="text" id="hero-favicon" placeholder="Ex: https://sua-imagem.png">
+          </div>
+          <button type="submit" class="btn">
+            Salvar Seção Hero
+          </button>
+        </form>
+      </section>
+
+      <!-- PAINEL REDES SOCIAIS -->
+      <section class="panel">
+        <h2 class="panel-title">
+          <span class="icon">🔗</span> Redes Sociais
+        </h2>
+        <form id="form-redes">
+          <div class="redes-container">
+            
+            <div class="redes-card">
+              <div class="redes-card-title instagram-color">
+                📸 Instagram
+              </div>
+              <div class="form-group">
+                <input type="text" id="rede-instagram-nick" placeholder="@seunick">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <input type="url" id="rede-instagram-href" placeholder="Link da URL">
+              </div>
+            </div>
+
+            <div class="redes-card">
+              <div class="redes-card-title tiktok-color">
+                🎵 TikTok
+              </div>
+              <div class="form-group">
+                <input type="text" id="rede-tiktok-nick" placeholder="@seunick">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <input type="url" id="rede-tiktok-href" placeholder="Link da URL">
+              </div>
+            </div>
+
+            <div class="redes-card">
+              <div class="redes-card-title youtube-color">
+                🎥 YouTube
+              </div>
+              <div class="form-group">
+                <input type="text" id="rede-youtube-nick" placeholder="@seunick">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <input type="url" id="rede-youtube-href" placeholder="Link da URL">
+              </div>
+            </div>
+
+            <div class="redes-card">
+              <div class="redes-card-title twitch-color">
+                👾 Twitch
+              </div>
+              <div class="form-group">
+                <input type="text" id="rede-twitch-nick" placeholder="@seunick">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <input type="url" id="rede-twitch-href" placeholder="Link da URL">
+              </div>
+            </div>
+
+          </div>
+          <button type="submit" class="btn" style="margin-top: 1.5rem;">
+            Salvar Redes Sociais
+          </button>
+        </form>
+      </section>
+
+      <!-- PAINEL PRODUTOS (MAIOR E COMPLETO) -->
+      <section class="panel full-width">
+        <h2 class="panel-title">
+          <span class="icon">📦</span> Gerenciar Seção de Produtos
+        </h2>
+        
+        <div class="add-product-layout">
+          <!-- Form para adicionar/editar produto -->
+          <div id="product-form-container" class="form-container-card">
+            <h3 id="product-form-title" class="form-section-subtitle">
+              ➕ Adicionar Novo Card de Produto
+            </h3>
+            <form id="form-add-produto">
+              <div class="form-group">
+                <label for="prod-nome">Nome do Produto</label>
+                <input type="text" id="prod-nome" placeholder="Ex: Jaqueta Esportiva" required>
+              </div>
+              <div class="form-group">
+                <label for="prod-desc">Descrição do Produto (Curta - Máximo 2 linhas)</label>
+                <textarea id="prod-desc" placeholder="Ex: Uma jaqueta estilosa, confortável e impermeável..." required></textarea>
+              </div>
+
+              <!-- Seleção do Modo de Imagem -->
+              <div class="image-mode-selector">
+                <button type="button" class="mode-btn active" id="mode-upload-btn">📁 Carregar Imagem</button>
+                <button type="button" class="mode-btn" id="mode-url-btn">🔗 Link da Internet</button>
+              </div>
+
+              <!-- Seção de Envio com Cropper -->
+              <div id="image-upload-section" class="image-section-container">
+                <input type="file" id="prod-file-input" accept="image/*" style="display: none;">
+                <div class="drag-drop-area" id="drag-drop-area">
+                  <span class="upload-icon">📤</span>
+                  <p class="upload-text">Arraste uma imagem ou clique aqui</p>
+                  <span class="upload-subtext">Arquivos PNG ou JPG</span>
+                </div>
+
+                <!-- Cropper Interativo de Zoom e Arraste -->
+                <div id="cropper-container" style="display: none;">
+                  <div class="cropper-frame">
+                    <img id="cropper-image" src="" alt="Imagem de corte" draggable="false">
+                  </div>
+                  <div class="cropper-controls">
+                    <label for="image-zoom" style="margin-bottom: 0.25rem;">🔍 Zoom / Ajustar Tamanho:</label>
+                    <input type="range" id="image-zoom" min="0.1" max="3" step="0.01" value="1">
+                    <p class="helper-text">Arraste a imagem dentro do quadrado azul para enquadrar</p>
+                    <button type="button" id="btn-trocar-imagem" class="btn btn-secondary" style="margin-top: 0.75rem; width: 100%; font-size: 0.9rem; padding: 0.6rem;">🔄 Trocar Imagem</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Seção de URL da Imagem -->
+              <div id="image-url-section" class="image-section-container" style="display: none;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="prod-img">Caminho ou URL da Imagem</label>
+                  <input type="text" id="prod-img" placeholder="Ex: Imagens/Jaqueta.png ou https://link.com/foto.png">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top: 1.25rem;">
+                <label for="prod-link">Link de Afiliado (Shopee, etc.)</label>
+                <input type="url" id="prod-link" placeholder="Ex: https://shopee.com.br/..." required>
+              </div>
+
+              <button type="submit" class="btn" style="margin-top: 0.5rem;">
+                Adicionar Produto ao Site
+              </button>
+            </form>
+          </div>
+
+          <!-- Listagem dos produtos atuais do site -->
+          <div>
+            <h3 style="margin-bottom: 1.25rem; font-size: 1.15rem; color: var(--accent-cyan); font-weight: 600;">
+              👁️ Produtos Ativos no Site
+            </h3>
+            <div class="admin-produtos-grid" id="admin-list-produtos">
+              <div class="empty-state">
+                <span class="emoji">🔄</span>
+                Carregando produtos ativos...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Toast de Sucesso/Alerta -->
+  <div id="toast-notification" class="toast">
+    <span id="toast-icon">✨</span>
+    <span id="toast-message">Alterações salvas com sucesso!</span>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div id="delete-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon">⚠️</div>
+      <h3 class="modal-title">Excluir Produto?</h3>
+      <p class="modal-text">Tem certeza absoluta que deseja remover este produto do site? Esta ação não pode ser desfeita.</p>
+      <div class="modal-actions">
+        <button id="btn-cancel-delete" class="btn-modal-cancel">Cancelar</button>
+        <button id="btn-confirm-delete" class="btn-modal-confirm">Sim, Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase v10 SDK via CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // Configuração do Firebase Realtime Database para o Dani Site (Mya)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxm40q-LAN1d7RlBJZ0mopgk3rwjipC1E",
+      authDomain: "mya-site-309c3.firebaseapp.com",
+      databaseURL: "https://mya-site-309c3-default-rtdb.firebaseio.com",
+      projectId: "mya-site-309c3",
+      storageBucket: "mya-site-309c3.firebasestorage.app",
+      messagingSenderId: "334450812790",
+      appId: "1:334450812790:web:9ec12218280cdb0c3a3c57"
+    };
+
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Sistema de feedback visual (Toast)
+    const toast = document.getElementById('toast-notification');
+    const toastMessage = document.getElementById('toast-message');
+    const toastIcon = document.getElementById('toast-icon');
+    let toastTimeout = null;
+
+    function showToast(message, type = 'success') {
+      if (toastTimeout) clearTimeout(toastTimeout);
+      
+      toastMessage.textContent = message;
+      if (type === 'success') {
+        toast.className = 'toast show toast-success';
+        toastIcon.textContent = '✅';
+      } else {
+        toast.className = 'toast show';
+        toastIcon.textContent = '❌';
+      }
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    // --- 1. ESCUTAR E POPULAR FORM HERO (PREVENÇÃO DE SOBREGRAVAÇÃO ATIVA) ---
+    const heroRef = ref(db, 'hero');
+    onValue(heroRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const nickInput = document.getElementById('hero-nick');
+        const taglineTextarea = document.getElementById('hero-tagline');
+        const faviconInput = document.getElementById('hero-favicon');
+        
+        // Evita atualizar os inputs se o usuário estiver focado digitando neles
+        if (document.activeElement !== nickInput) {
+          nickInput.value = data.nick || '';
+        }
+        if (document.activeElement !== taglineTextarea) {
+          taglineTextarea.value = data.tagline || '';
+        }
+        if (document.activeElement !== faviconInput) {
+          faviconInput.value = data.favicon || '';
+        }
+        
+        // Atualiza o Favicon dinamicamente no painel admin
+        if (data.favicon) {
+          let link = document.querySelector("link[rel~='icon']");
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+          }
+          link.href = data.favicon;
+          
+          const shortcutIcon = document.querySelector("link[rel='shortcut icon']");
+          if (shortcutIcon) shortcutIcon.href = data.favicon;
+        }
+      }
+    });
+
+    // Enviar dados Hero
+    document.getElementById('form-hero').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nick = document.getElementById('hero-nick').value.trim();
+      const tagline = document.getElementById('hero-tagline').value.trim();
+      const favicon = document.getElementById('hero-favicon').value.trim();
+
+      set(heroRef, { nick, tagline, favicon })
+        .then(() => showToast('Seção Hero atualizada no site principal!'))
+        .catch(err => {
+          console.error(err);
+          showToast('Erro ao salvar Seção Hero.', 'error');
+        });
+    });
+
+    // --- 2. ESCUTAR E POPULAR FORM REDES (PREVENÇÃO DE SOBREGRAVAÇÃO ATIVA) ---
+    const redesRef = ref(db, 'redes');
+    onValue(redesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const inputs = {
+          'rede-instagram-nick': data.instagram?.nick,
+          'rede-instagram-href': data.instagram?.href,
+          'rede-tiktok-nick': data.tiktok?.nick,
+          'rede-tiktok-href': data.tiktok?.href,
+          'rede-youtube-nick': data.youtube?.nick,
+          'rede-youtube-href': data.youtube?.href,
+          'rede-twitch-nick': data.twitch?.nick,
+          'rede-twitch-href': data.twitch?.href
+        };
+
+        Object.keys(inputs).forEach(id => {
+          const el = document.getElementById(id);
+          if (el && document.activeElement !== el) {
+            el.value = inputs[id] || '';
+          }
+        });
+      }
+    });
+
+    // Enviar dados Redes
+    document.getElementById('form-redes').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const redesData = {
+        instagram: {
+          nick: document.getElementById('rede-instagram-nick').value.trim(),
+          href: document.getElementById('rede-instagram-href').value.trim()
+        },
+        tiktok: {
+          nick: document.getElementById('rede-tiktok-nick').value.trim(),
+          href: document.getElementById('rede-tiktok-href').value.trim()
+        },
+        youtube: {
+          nick: document.getElementById('rede-youtube-nick').value.trim(),
+          href: document.getElementById('rede-youtube-href').value.trim()
+        },
+        twitch: {
+          nick: document.getElementById('rede-twitch-nick').value.trim(),
+          href: document.getElementById('rede-twitch-href').value.trim()
+        }
+      };
+
+      set(redesRef, redesData)
+        .then(() => showToast('Links de Redes Sociais salvos no site!'))
+        .catch(err => {
+          console.error(err);
+          showToast('Erro ao salvar redes sociais.', 'error');
+        });
+    });
+
+
+    // --- 3. CONTROLE DE MODO DE IMAGEM (UPLOAD VS URL) ---
+    let activeImageMode = 'upload'; // 'upload' ou 'url'
+    let currentProductImage = ''; // guarda Base64 ou URL
+
+    const modeUploadBtn = document.getElementById('mode-upload-btn');
+    const modeUrlBtn = document.getElementById('mode-url-btn');
+    const imageUploadSection = document.getElementById('image-upload-section');
+    const imageUrlSection = document.getElementById('image-url-section');
+
+    function ativarModoImagem(modo) {
+      activeImageMode = modo;
+      if (modo === 'upload') {
+        modeUploadBtn.classList.add('active');
+        modeUrlBtn.classList.remove('active');
+        imageUploadSection.style.display = 'block';
+        imageUrlSection.style.display = 'none';
+        document.getElementById('prod-img').removeAttribute('required');
+      } else {
+        modeUploadBtn.classList.remove('active');
+        modeUrlBtn.classList.add('active');
+        imageUploadSection.style.display = 'none';
+        imageUrlSection.style.display = 'block';
+        document.getElementById('prod-img').setAttribute('required', 'required');
+      }
+    }
+
+    modeUploadBtn.addEventListener('click', () => ativarModoImagem('upload'));
+    modeUrlBtn.addEventListener('click', () => ativarModoImagem('url'));
+
+
+    // --- 4. IMPLEMENTAÇÃO DO CROPPER INTERATIVO ---
+    const fileInput = document.getElementById('prod-file-input');
+    const dragDropArea = document.getElementById('drag-drop-area');
+    const cropperContainer = document.getElementById('cropper-container');
+    const cropperImage = document.getElementById('cropper-image');
+    const zoomSlider = document.getElementById('image-zoom');
+    const cropperFrame = document.querySelector('.cropper-frame');
+
+    let imgOriginalW = 0;
+    let imgOriginalH = 0;
+    let imgFitW = 0;
+    let imgFitH = 0;
+    let imgX = 0;
+    let imgY = 0;
+    let imgScale = 1;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let imageLoaded = false;
+
+    // Dispara seletor de arquivos
+    dragDropArea.addEventListener('click', () => fileInput.click());
+    
+    // Botão de trocar imagem (dentro do cropper)
+    document.getElementById('btn-trocar-imagem').addEventListener('click', () => fileInput.click());
+
+    // Eventos de Drag over
+    dragDropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dragDropArea.classList.add('drag-over');
+    });
+
+    dragDropArea.addEventListener('dragleave', () => {
+      dragDropArea.classList.remove('drag-over');
+    });
+
+    dragDropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragDropArea.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        carregarImagemParaCorte(file);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        carregarImagemParaCorte(file);
+        fileInput.value = ''; // Permite selecionar o mesmo arquivo consecutivamente
+      }
+    });
+
+    function carregarImagemParaCorte(file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        cropperImage.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Inicializa a imagem no cropper
+    cropperImage.onload = () => {
+      if (!cropperImage.src || cropperImage.naturalWidth === 0) {
+        return;
+      }
+      imgOriginalW = cropperImage.naturalWidth;
+      imgOriginalH = cropperImage.naturalHeight;
+      
+      const aspect = imgOriginalW / imgOriginalH;
+      const targetAspect = 320 / 180; // 16:9
+      
+      if (aspect > targetAspect) {
+        imgFitH = 180;
+        imgFitW = 180 * aspect;
+      } else {
+        imgFitW = 320;
+        imgFitH = 320 / aspect;
+      }
+      
+      imgX = (320 - imgFitW) / 2;
+      imgY = (180 - imgFitH) / 2;
+      imgScale = 1;
+      zoomSlider.value = 1;
+      
+      updateImageTransform();
+      
+      dragDropArea.style.display = 'none';
+      cropperContainer.style.display = 'block';
+      imageLoaded = true;
+    };
+
+    function updateImageTransform() {
+      const w = imgFitW * imgScale;
+      const h = imgFitH * imgScale;
+      
+      // Removido os limites restritos que forçavam a imagem a cobrir tudo.
+      // Agora o usuário pode dar zoom out e deixar bordas vazias (preenchidas pelo fundo do canvas).
+      // Se quiser limitar para não sumir da tela, poderia usar:
+      // const minX = 320 - w; ...
+      // mas vamos deixar livre para zoom out funcionar livremente no frame.
+      
+      cropperImage.style.width = `${imgFitW}px`;
+      cropperImage.style.height = `${imgFitH}px`;
+      cropperImage.style.transform = `translate(${imgX}px, ${imgY}px) scale(${imgScale})`;
+    }
+
+    // Zoom centrado
+    zoomSlider.addEventListener('input', (e) => {
+      if (!imageLoaded) return;
+      const oldScale = imgScale;
+      imgScale = parseFloat(e.target.value);
+      
+      const cx = 160;
+      const cy = 90;
+      
+      imgX = cx - (cx - imgX) * (imgScale / oldScale);
+      imgY = cy - (cy - imgY) * (imgScale / oldScale);
+      
+      updateImageTransform();
+    });
+
+    // Eventos de arraste (Mouse)
+    cropperFrame.addEventListener('mousedown', (e) => {
+      if (!imageLoaded) return;
+      isDragging = true;
+      startX = e.clientX - imgX;
+      startY = e.clientY - imgY;
+      cropperFrame.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      imgX = e.clientX - startX;
+      imgY = e.clientY - startY;
+      updateImageTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        cropperFrame.style.cursor = 'move';
+      }
+    });
+
+    // Eventos de arraste (Touchscreen)
+    cropperFrame.addEventListener('touchstart', (e) => {
+      if (!imageLoaded) return;
+      isDragging = true;
+      const touch = e.touches[0];
+      startX = touch.clientX - imgX;
+      startY = touch.clientY - imgY;
+    });
+
+    cropperFrame.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      imgX = touch.clientX - startX;
+      imgY = touch.clientY - startY;
+      updateImageTransform();
+    });
+
+    cropperFrame.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // Exporta imagem do canvas em proporção de alta qualidade 960x540 (16:9)
+    function getCroppedBase64() {
+      if (!imageLoaded) return '';
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = 960;
+      canvas.height = 540; // 16:9
+      const ctx = canvas.getContext('2d');
+      
+      // Habilita suavização de imagem de alta qualidade
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      
+      // Limpa o canvas para garantir fundo transparente
+      ctx.clearRect(0, 0, 960, 540);
+      
+      const ratio = 960 / 320; // Proporção exata de 3.0x
+      
+      const dx = imgX * ratio;
+      const dy = imgY * ratio;
+      const dw = imgFitW * imgScale * ratio;
+      const dh = imgFitH * imgScale * ratio;
+      
+      ctx.drawImage(cropperImage, dx, dy, dw, dh);
+      
+      return canvas.toDataURL('image/png');
+    }
+
+
+    // --- 5. GESTÃO DOS PRODUTOS (REALTIME, EXCLUSÃO E EDIÇÃO) ---
+    const produtosRef = ref(db, 'produtos');
+    const adminListEl = document.getElementById('admin-list-produtos');
+    const formContainer = document.getElementById('product-form-container');
+    const formTitle = document.getElementById('product-form-title');
+    const btnSubmit = document.querySelector('#form-add-produto button[type="submit"]');
+    
+    let editId = null;
+
+    onValue(produtosRef, (snapshot) => {
+      const data = snapshot.val();
+      adminListEl.innerHTML = '';
+
+      if (!data || Object.keys(data).length === 0) {
+        adminListEl.innerHTML = `
+          <div class="empty-state">
+            <span class="emoji">🛍️</span>
+            Nenhum produto cadastrado atualmente.
+          </div>
+        `;
+        return;
+      }
+
+      Object.keys(data).forEach((key) => {
+        const prod = data[key];
+        
+        const cardHTML = `
+          <div class="admin-prod-card" id="admin-prod-${key}">
+            <!-- Overlay de Edição ao passar o mouse -->
+            <div class="admin-prod-overlay" data-id="${key}">
+              <span class="edit-pencil-icon">✏️</span>
+              <span class="edit-text">Editar Produto</span>
+            </div>
+            
+            <img src="${prod.img}" alt="${prod.nome}" class="admin-prod-img" onerror="this.src='https://placehold.co/400x250/141020/fff?text=Sem+Imagem';">
+            <div class="admin-prod-info">
+              <h4 class="admin-prod-nome">${prod.nome}</h4>
+              <p class="admin-prod-desc">${prod.desc}</p>
+              <div class="admin-prod-actions">
+                <button class="btn-danger" data-id="${key}">Excluir</button>
+              </div>
+            </div>
+          </div>
+        `;
+        adminListEl.insertAdjacentHTML('beforeend', cardHTML);
+      });
+
+      // Ativa exclusão
+      document.querySelectorAll('.btn-danger').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          excluirProduto(id);
+        });
+      });
+
+      // Ativa clique para modo de edição
+      document.querySelectorAll('.admin-prod-overlay').forEach(overlay => {
+        overlay.addEventListener('click', () => {
+          const id = overlay.getAttribute('data-id');
+          entrarModoEdicao(id, data[id]);
+        });
+      });
+    });
+
+    // Exclusão custom modal
+    let produtoParaExcluir = null;
+    const deleteModal = document.getElementById('delete-modal');
+    
+    document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+      deleteModal.classList.remove('show');
+      produtoParaExcluir = null;
+    });
+
+    document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+      if (produtoParaExcluir) {
+        if (editId === produtoParaExcluir) sairModoEdicao();
+        
+        const itemRef = ref(db, `produtos/${produtoParaExcluir}`);
+        remove(itemRef)
+          .then(() => {
+            showToast('Produto excluído com sucesso!');
+            deleteModal.classList.remove('show');
+            produtoParaExcluir = null;
+          })
+          .catch(err => {
+            console.error(err);
+            showToast('Erro ao deletar produto.', 'error');
+            deleteModal.classList.remove('show');
+          });
+      }
+    });
+
+    function excluirProduto(id) {
+      produtoParaExcluir = id;
+      deleteModal.classList.add('show');
+    }
+
+    // Modo Edição
+    function entrarModoEdicao(id, prod) {
+      editId = id;
+      
+      formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      formContainer.classList.add('edit-mode');
+      formTitle.innerHTML = `📝 Editar Produto: ${prod.nome}`;
+      btnSubmit.innerHTML = 'Salvar Alterações';
+      
+      // Cria botão cancelar se não existir
+      if (!document.getElementById('btn-cancel-edit')) {
+        const btnCancel = document.createElement('button');
+        btnCancel.type = 'button';
+        btnCancel.id = 'btn-cancel-edit';
+        btnCancel.className = 'btn btn-secondary';
+        btnCancel.style.marginTop = '0.5rem';
+        btnCancel.innerHTML = 'Cancelar Edição';
+        btnCancel.addEventListener('click', sairModoEdicao);
+        document.getElementById('form-add-produto').appendChild(btnCancel);
+      }
+
+      document.getElementById('prod-nome').value = prod.nome || '';
+      document.getElementById('prod-desc').value = prod.desc || '';
+      document.getElementById('prod-link').value = prod.link || '';
+
+      if (prod.img && prod.img.startsWith('data:image')) {
+        ativarModoImagem('upload');
+        // Usa setTimeout para garantir que os display blocks apliquem antes de setar o src
+        setTimeout(() => {
+          cropperImage.src = prod.img;
+        }, 10);
+        
+      } else {
+        ativarModoImagem('url');
+        document.getElementById('prod-img').value = prod.img || '';
+      }
+    }
+
+    function sairModoEdicao() {
+      editId = null;
+      formContainer.classList.remove('edit-mode');
+      formTitle.innerHTML = '➕ Adicionar Novo Card de Produto';
+      btnSubmit.innerHTML = 'Adicionar Produto ao Site';
+      
+      const btnCancel = document.getElementById('btn-cancel-edit');
+      if (btnCancel) btnCancel.remove();
+
+      document.getElementById('form-add-produto').reset();
+      
+      cropperImage.src = '';
+      cropperContainer.style.display = 'none';
+      dragDropArea.style.display = 'flex';
+      imageLoaded = false;
+      
+      ativarModoImagem('upload');
+    }
+
+    // --- 6. SUBMISSÃO DO FORM DE PRODUTOS ---
+    document.getElementById('form-add-produto').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nome = document.getElementById('prod-nome').value.trim();
+      const desc = document.getElementById('prod-desc').value.trim();
+      const link = document.getElementById('prod-link').value.trim();
+      
+      let finalImg = '';
+
+      if (activeImageMode === 'upload') {
+        if (imageLoaded) {
+          // Sempre gera a base64 a partir do cropper (aplica zoom e cortes novos ou mantidos)
+          finalImg = getCroppedBase64();
+        } else {
+          showToast('Por favor, carregue uma imagem para o produto!', 'error');
+          return;
+        }
+      } else {
+        finalImg = document.getElementById('prod-img').value.trim();
+        if (!finalImg) {
+          showToast('Por favor, digite o link da imagem!', 'error');
+          return;
+        }
+      }
+
+      const prodData = { nome, desc, img: finalImg, link };
+
+      if (editId) {
+        // Modo Edição: Atualizar existente
+        const itemRef = ref(db, `produtos/${editId}`);
+        set(itemRef, prodData)
+          .then(() => {
+            showToast('Produto atualizado com sucesso no site!');
+            sairModoEdicao();
+          })
+          .catch(err => {
+            console.error(err);
+            showToast('Erro ao atualizar produto.', 'error');
+          });
+      } else {
+        // Modo Criação: Novo produto
+        const novoProdRef = push(produtosRef);
+        set(novoProdRef, prodData)
+          .then(() => {
+            showToast('Produto adicionado ao site com sucesso!');
+            sairModoEdicao();
+          })
+          .catch(err => {
+            console.error(err);
+            showToast('Erro ao adicionar produto.', 'error');
+          });
+      }
+    });
+  </script>
+</body>
+
+</html>
