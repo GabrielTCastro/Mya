@@ -23,27 +23,27 @@
 
 /* Ajuste de margem para afastar os cards do título em #redes */
 #redes .section-header {
-  margin-bottom: 6.5rem;
+  margin-bottom: 4rem;
 }
 
 /* === SLIDER === */
 .social-slider {
   position: relative;
   width: 100%;
-  max-width: calc(3 * var(--card-width));
-  height: var(--card-height);
+  max-width: calc(3 * var(--card-width) + 80px);
+  height: calc(var(--card-height) + 80px);
   margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: visible;
 }
 
 .social-cards__wrapper {
   position: relative;
   width: 100%;
   height: 100%;
-  perspective: 1200px;
-  transform-style: preserve-3d;
+  overflow: visible;
 }
 
 /* === CARD BASE === */
@@ -58,16 +58,13 @@
   cursor: pointer;
   user-select: none;
   opacity: 0;
-  transform: translate(-50%, -50%) translateX(0) rotateY(0deg) scale(0.8);
+  transform: perspective(1200px) translate(-50%, -50%) translateX(0) rotateY(0deg) scale(0.8);
   box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0),
     0 0 0 1px rgba(255, 255, 255, 0.06);
   transition:
     transform var(--card-dur) var(--card-ease),
     opacity var(--card-dur) var(--card-ease),
     box-shadow 150ms ease-out;
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 /* Overlay escuro nos laterais */
@@ -84,11 +81,11 @@
 
 /* === ESTADO: CENTRAL === */
 .social-card.current--card {
-  transform: translate(-50%, -50%) translateX(0) translateZ(100px) rotateY(0deg) scale(1.08);
+  transform: perspective(1200px) translate(-50%, -50%) translateX(0) rotateY(0deg) scale(1.08);
   opacity: 1;
   z-index: 30;
   cursor: default;
-  box-shadow: 0 15px 35px -5px var(--platform-shadow, rgba(255, 255, 255, 0.15)),
+  box-shadow: 0 0 30px 4px var(--platform-shadow, rgba(255, 255, 255, 0.15)),
     0 0 0 1px rgba(255, 255, 255, 0.06);
   transition:
     transform var(--card-dur) var(--card-ease),
@@ -102,7 +99,7 @@
 
 /* === ESTADO: ESQUERDA === */
 .social-card.previous--card {
-  transform: translate(-50%, -50%) translateX(calc(-1 * var(--card-width) * 1.05)) translateZ(50px) rotateY(20deg) scale(0.88);
+  transform: perspective(1200px) translate(-50%, -50%) translateX(calc(-1 * var(--card-width) * 1.05)) rotateY(20deg) scale(0.88);
   opacity: 0.6;
   z-index: 20;
 }
@@ -113,7 +110,7 @@
 
 /* === ESTADO: DIREITA === */
 .social-card.next--card {
-  transform: translate(-50%, -50%) translateX(calc(var(--card-width) * 1.05)) translateZ(50px) rotateY(-20deg) scale(0.88);
+  transform: perspective(1200px) translate(-50%, -50%) translateX(calc(var(--card-width) * 1.05)) rotateY(-20deg) scale(0.88);
   opacity: 0.6;
   z-index: 20;
 }
@@ -127,7 +124,7 @@
   opacity: 0;
   z-index: 1;
   pointer-events: none;
-  transform: translate(-50%, -50%) translateX(0) rotateY(0deg) scale(0.75);
+  transform: perspective(1200px) translate(-50%, -50%) translateX(0) rotateY(0deg) scale(0.75);
 }
 
 /* === INNER === */
@@ -237,11 +234,11 @@
 }
 
 [data-platform="tiktok"] {
-  --platform-shadow: rgba(30, 30, 30, 0.9);
+  --platform-shadow: rgba(255, 255, 255, 0.35);
 }
 
 [data-platform="tiktok"] .social-card__inner {
-  background: linear-gradient(145deg, #010101 0%, #232323 50%, #010101 100%);
+  background: linear-gradient(145deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
 }
 
 [data-platform="youtube"] {

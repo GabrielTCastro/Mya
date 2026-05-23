@@ -18,7 +18,7 @@
   <!-- Segurança -->
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://unpkg.com;">
+    content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com wss://*.firebaseio.com; img-src 'self' data: https:;">
 
   <!-- EDITE AQUI: Substitua [SEU NICK] pelo seu nick real -->
   <title>𝓜𝔂𝓪</title>
@@ -28,6 +28,11 @@
   <link rel="stylesheet" href="css/hero.css?v=5">
   <link rel="stylesheet" href="css/redes.css?v=6">
   <link rel="stylesheet" href="css/produtos.css?v=19">
+  <link rel="apple-touch-icon" sizes="180x180" href="Imagens/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Imagens/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Imagens/favicon-16x16.png">
+  <link rel="manifest" href="Imagens/site.webmanifest">
+  <link rel="shortcut icon" href="Imagens/favicon.ico">
 </head>
 
 <body>
@@ -62,18 +67,13 @@
 
       <div class="produtos-grid reveal" id="produtos-grid">
         <!--
-      CARD DE PRODUTO
-      Para duplicar: copie este bloco inteiro e altere:
-      - data-name: nome do produto (usado na busca)
-      - .produto-img: URL da imagem do produto
-      - .produto-nome: nome exibido
-      - .produto-desc: descrição curta
-      - href do botão: link de afiliação
-    -->
+       Os cards de produtos serão renderizados dinamicamente pelo js/produtos.js
+       carregando os dados do Firebase Realtime Database.
+       Os cards hardcoded abaixo servem de esqueleto visual enquanto carrega.
+      -->
         <article class="produto-card" data-name="Jaqueta Esportiva">
           <div class="spotlight-outer"></div>
           <div class="produto-img-wrapper">
-            <!-- EDITE AQUI: Substitua o src pela URL da imagem do produto -->
             <img src="Imagens/Jaqueta.png" alt="Jaqueta Esportiva" class="produto-img" loading="lazy" decoding="async"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <div class="produto-img-placeholder">
@@ -82,14 +82,9 @@
             </div>
           </div>
           <div class="produto-body">
-            <!-- EDITE AQUI: Nome do produto -->
             <h3 class="produto-nome">Jaqueta Esportiva</h3>
-            <!-- EDITE AQUI: Descrição curta -->
             <p class="produto-desc">Uma jaqueta esportiva exclusivamente feminina super confortavel</p>
-            <!-- EDITE AQUI: Substitua # pelo link de afiliação -->
-            <a href="https://shopee.com.br/product/428184127/26082452670?channel_code=MyCollection&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRoz0ZUjQw0QlRa--FjB0AKnHQPF7xv4DyGj9-GQwqn4zSdB6gztmw7ebmtsZs9FPJxlVqctc57WUE3IRqmNpcGhlcnRleHTEhAAAAAwhK68lkrx37arwOeofrI0dSv02HTS84yuw28zjJi3wT3HJGhZ_zMQv6ElJi6S4jonpjgVjHwMQkMT5-bYwbz7vHaZlGhDInbEcoX6-Z5PwXKRS7PH_CLCo2E9-GuVumxaUpiKmTUMtpke-O2l5cFsdUWfLi0YzcF8aca1QzHvnVA&mmp_pid=an_18303130921&uls_trackid=55lti47p00pa&utm_campaign=id_U5ue1TyCNB&utm_content=----&utm_medium=affiliates&utm_source=an_18303130921&utm_term=ewuvgkjaw5vo"
-              class="produto-btn" data-link="jaqueta-esportiva" target="_blank"
-              rel="noopener noreferrer sponsored">Acessar</a>
+            <a href="#" class="produto-btn" target="_blank" rel="noopener noreferrer sponsored">Acessar</a>
           </div>
         </article>
 
@@ -106,38 +101,15 @@
           <div class="produto-body">
             <h3 class="produto-nome">Conjunto Fitness</h3>
             <p class="produto-desc">Um conjunto com material de qualidade, confortavel e tento um short duplo</p>
-            <a href="https://shopee.com.br/product/349179341/22497622314?channel_code=MyCollection&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRoz0ZUjQw0QlRa--FjB0AKnHQPF7xv4DyGj9-GQwqn4zSdB6gztmw7ebmtsZs9FPJxlVqctc57WUE3IRqmNpcGhlcnRleHTEhAAAAAy4vcs0cKrGaHKAcMuFJnIg6Wh7HxVEmPEuTGyloWEeubcH3mrSmiYUKW27S_EqfmOyIfP8BDKzt3ofQlbJyIJ3xvy-G3GdTnnSFvZ0rEFmYn5NGf6CqvZ-BsaYv5odox0JTs0QR64J55b5YQp3YhRfsrUyMilspx5Ti2MjcVdG5Q&mmp_pid=an_18303130921&uls_trackid=55ltsjn400l0&utm_campaign=id_HV6B4qweBz&utm_content=----&utm_medium=affiliates&utm_source=an_18303130921&utm_term=ewv4iwpu1bq9"
-              class="produto-btn" data-link="conjunto-fitness" target="_blank"
-              rel="noopener noreferrer sponsored">Acessar</a>
+            <a href="#" class="produto-btn" target="_blank" rel="noopener noreferrer sponsored">Acessar</a>
           </div>
         </article>
-
-        <article class="produto-card" data-name="Produto 3">
-          <div class="spotlight-outer"></div>
-          <div class="produto-img-wrapper">
-            <img src="" alt="Produto 3" class="produto-img" loading="lazy" decoding="async" width="400" height="225"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="produto-img-placeholder">
-              <span>📦</span>
-              <span>Imagem do Produto</span>
-            </div>
-          </div>
-          <div class="produto-body">
-            <h3 class="produto-nome">Produto 3</h3>
-            <p class="produto-desc">Descrição breve do produto aqui. Máximo 2 linhas.</p>
-            <a href="#" class="produto-btn" data-link="produto-3" target="_blank"
-              rel="noopener noreferrer sponsored">Acessar</a>
-          </div>
-        </article>
-
-
       </div>
     </section>
 
   </main>
   <footer id="rodape">
-    <!-- EDITE AQUI: Substitua pelo seu nome/crédito se quiser -->
-    <p class="footer-text">© 2024 <span class="footer-nick">Seu Nick</span></p>
+    <p class="footer-text">© 2024 <span class="footer-nick">𝓜𝔂𝓪</span></p>
   </footer>
 
 
@@ -176,8 +148,8 @@
   </script>
 
   <script src="js/geral.js?v=4" defer></script>
-  <script src="js/links.js?v=4" defer></script>
-  <script src="js/produtos.js?v=13" defer></script>
+  <script src="js/links.js?v=4" type="module"></script>
+  <script src="js/produtos.js?v=13" type="module"></script>
   <script src="js/particles.js?v=2" defer></script>
 </body>
 
