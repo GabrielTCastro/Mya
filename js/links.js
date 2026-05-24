@@ -3,7 +3,7 @@
    ================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Configuração do Firebase Realtime Database para o Dani Site (Mya)
 const firebaseConfig = {
@@ -171,7 +171,7 @@ const db = getDatabase(app);
     onValue(redesRef, (snapshot) => {
       let data = snapshot.val();
       
-      // Se não existir dados no banco, migra os dados padrão automaticamente
+      // Se não existir dados no banco, usa exibição padrão
       if (!data) {
         data = {
           instagram: { nick: '@seunick', href: 'https://www.instagram.com/' },
@@ -179,7 +179,6 @@ const db = getDatabase(app);
           youtube: { nick: '@seunick', href: 'https://www.youtube.com/' },
           twitch: { nick: '@seunick', href: 'https://www.twitch.tv/' }
         };
-        set(redesRef, data);
       }
 
       // Constrói o array PLATAFORMAS mapeando com os SVGs e nomes estáticos

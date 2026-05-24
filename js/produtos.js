@@ -4,7 +4,7 @@
    ================================================ */
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   // Configuração do Firebase Realtime Database para o Dani Site (Mya)
   const firebaseConfig = {
@@ -161,12 +161,14 @@
     const heroRef = ref(db, 'hero');
     onValue(heroRef, (snapshot) => {
       let data = snapshot.val();
+      
+      // Se não tiver dados no DB, não envia nada (é um app apenas de leitura).
+      // Usa dados padrão visualmente para não quebrar o layout.
       if (!data) {
         data = {
           nick: "𝓜𝔂𝓪",
           tagline: "Sua descrição curta aqui"
         };
-        set(heroRef, data);
       }
 
       // Atualiza o DOM do Hero e o título da aba
@@ -201,7 +203,7 @@
     onValue(produtosRef, (snapshot) => {
       let data = snapshot.val();
       
-      // Se não existir dados, migra os produtos padrões
+      // Se não existir dados, usa os mockups padrões para exibição
       if (!data) {
         data = {
           "prod1": {
@@ -217,7 +219,6 @@
             link: "https://shopee.com.br/product/349179341/22497622314?channel_code=MyCollection&gads_t_sig=gqRjZGVrxHCFomtpsTE0MjUxOnRzc19zZGtfa2V5omt20QABpGFsZ2_SAAAAZKNkZWvAomN0xEAAAAAMRoz0ZUjQw0QlRa--FjB0AKnHQPF7xv4DyGj9-GQwqn4zSdB6gztmw7ebmtsZs9FPJxlVqctc57WUE3IRqmNpcGhlcnRleHTEhAAAAAy4vcs0cKrGaHKAcMuFJnIg6Wh7HxVEmPEuTGyloWEeubcH3mrSmiYUKW27S_EqfmOyIfP8BDKzt3ofQlbJyIJ3xvy-G3GdTnnSFvZ0rEFmYn5NGf6CqvZ-BsaYv5odox0JTs0QR64J55b5YQp3YhRfsrUyMilspx5Ti2MjcVdG5Q&mmp_pid=an_18303130921&uls_trackid=55ltsjn400l0&utm_campaign=id_HV6B4qweBz&utm_content=----&utm_medium=affiliates&utm_source=an_18303130921&utm_term=ewv4iwpu1bq9"
           }
         };
-        set(produtosRef, data);
       }
 
       // Renderiza os produtos no container
