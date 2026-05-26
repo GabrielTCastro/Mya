@@ -5,7 +5,14 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "admin.html"
+      "admin.html",
+      "extract_logos.js",
+      "screenshot.js",
+      "screenshot.png",
+      "server_test.js",
+      "test_firebase.js",
+      "package.json",
+      "package-lock.json"
     ],
     "rewrites": [
       {

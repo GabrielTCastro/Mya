@@ -166,7 +166,7 @@
   position: absolute;
   width: 140%; height: 140%;
   left: -20%; top: -20%;
-  object-fit: contain;
+  object-fit: cover;
   opacity: 0; 
   transform: scale(0.714) translateY(0); /* (100 / 140 = ~0.714) Imagem renderiza em alta res e reduz */
   transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -179,7 +179,7 @@
 .produto-img-placeholder {
   display: none; flex-direction: column; align-items: center;
   justify-content: center; gap: 0.5rem; height: 100%;
-  color: var(--text-secondary); font-size: 0.85rem;
+  color: #aebfd1; font-size: 0.85rem;
 }
 
 /* ======================================================

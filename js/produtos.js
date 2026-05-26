@@ -3,26 +3,39 @@
    Otimizado com rAF throttle e atualizações em tempo real
    ================================================ */
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-  // Configuração do Firebase Realtime Database para o Dani Site (Mya)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDmeQRWvfia5U1JZOZPDwM_0apdPo09cpc",
-    authDomain: "mya-oficial.firebaseapp.com",
-    databaseURL: "https://mya-oficial-default-rtdb.firebaseio.com",
-    projectId: "mya-oficial",
-    storageBucket: "mya-oficial.firebasestorage.app",
-    messagingSenderId: "322566791231",
-    appId: "1:322566791231:web:94492e5af7866ca8bf588a"
-  };
-
-  // Inicializa Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+  import { db, ref, onValue } from "./firebase-init.js";
 
 (function() {
   'use strict';
+
+  // Metadados das marcas/parcerias do Hero (logos PNG de alta qualidade)
+  const BRAND_METADATA = {
+    shopee: {
+      nome: 'Shopee',
+      className: 'brand-shopee',
+      logo: 'Imagens/logo/Shopee.png'
+    },
+    amazon: {
+      nome: 'Amazon',
+      className: 'brand-amazon',
+      logo: 'Imagens/logo/Amazon.png'
+    },
+    mercado_livre: {
+      nome: 'Mercado Livre',
+      className: 'brand-mercado_livre',
+      logo: 'Imagens/logo/Mercado livre.png'
+    },
+    shein: {
+      nome: 'Shein',
+      className: 'brand-shein',
+      logo: 'Imagens/logo/Shein.png'
+    },
+    aliexpress: {
+      nome: 'AliExpress',
+      className: 'brand-aliexpress',
+      logo: 'Imagens/logo/AliExpress.png'
+    }
+  };
 
   // Configurações de efeitos
   var MAX_TILT     = 12;
@@ -182,6 +195,27 @@
       if (heroTaglineEl) heroTaglineEl.textContent = data.tagline;
       document.title = data.nick;
       if (metaDescEl) metaDescEl.setAttribute('content', data.tagline);
+      
+      // 1.1 Renderiza dinamicamente os botões de marcas de acordo com o link ("O Pulo do Gato")
+      const brandButtonsEl = document.getElementById('brand-buttons');
+      if (brandButtonsEl) {
+        brandButtonsEl.innerHTML = '';
+        const brands = data.brands || {};
+        
+        Object.keys(BRAND_METADATA).forEach((key) => {
+          const link = brands[key];
+          if (link && link.trim() !== '') {
+            const meta = BRAND_METADATA[key];
+            const logoSrc = (data.brands_logos && data.brands_logos[key]) ? data.brands_logos[key] : meta.logo;
+            const btnHTML = `
+              <a href="${link.trim()}" class="brand-button ${meta.className}" target="_blank" rel="noopener noreferrer" title="Visitar ${meta.nome}">
+                <img src="${logoSrc}" alt="${meta.nome}" class="brand-logo-img">
+              </a>
+            `;
+            brandButtonsEl.insertAdjacentHTML('beforeend', btnHTML);
+          }
+        });
+      }
       
       // Atualiza Favicon Dinamicamente
       if (data.favicon) {
